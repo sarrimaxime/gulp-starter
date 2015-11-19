@@ -1,0 +1,23 @@
+body {
+	font-family FontName
+	background: bg-color
+	font:400 13px/23px font-family
+}
+
+// -----------------------------------------o
+
+a {
+	color:ihnerit
+
+	&:hover, &:active {
+		border-bottom:1px solid black
+	}
+}
+
+.no-transition {
+	transition:all 0ms linear 0ms !important
+
+	* {
+		transition:all 0ms linear 0ms !important
+	}
+}

@@ -1,0 +1,34 @@
+{
+	// Default options
+	'functions': true
+}
+
+values = {
+{{#items}}
+	'{{name}}': {
+		'src': '{{{escaped_image}}}',
+		'x': {{px.offset_x}},
+		'y': {{px.offset_y}},
+		'width': {{px.width}},
+		'height': {{px.height}},
+		'spriteWidth': {{total_width}}px,
+		'spriteHeight': {{total_height}}px
+	},
+{{/items}}
+};
+
+{{#options.functions}}
+sprite(img, pixel-ratio = 1) {
+
+	background-image:url(values[img].src);
+	background-position:values[img].x values[img].y;
+	width:values[img].width;
+	height:values[img].height;
+	background-size:(values[img].spriteWidth / pixel-ratio) (values[img].spriteHeight / pixel-ratio);
+
+}
+{{/options.functions}}
+
+
+
+

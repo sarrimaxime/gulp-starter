@@ -1,0 +1,49 @@
+src: ./src/
+site: ./site/
+
+scripts: 
+    -
+        src: js/Main.js
+        dest: assets/js/
+        filename: scripts.js
+
+styles: 
+    -
+        src: 
+            - css/style.styl
+        dest: assets/css/
+
+favicons:
+    src: favicons/
+    dest: assets/favicons/
+    type:
+        -
+            name: apple-touch-icon
+            ext: .png
+            sizes: [16, 32, 96, 160, 192]
+        -
+            name: favicon
+            ext: .png
+            sizes: [57, 60, 72, 76, 114, 120, 144, 152, 180]
+        -
+            name: ms-tile
+            ext: .png
+            sizes: [144]
+
+sprites:
+    -
+        type: png
+        src: 
+            - sprite/png/**/*.png
+        dest: assets/img/sprite
+        imgPath: assets/img/sprite
+        cssDest: css/
+        filename: sprite.png
+        stylename: sprite.styl
+    -
+        type: svg
+        src: 
+            - sprite/svg/**/*.svg
+        dest: App/views/desktop/partials/
+        filename: icons.svg
+
