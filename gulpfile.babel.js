@@ -30,6 +30,7 @@ const taskByExtension = {
 		'favicons': 'favicons',
 		'sprites': 'sprites:png'
 	},
+	'yml': 'yaml'
 }
 
 

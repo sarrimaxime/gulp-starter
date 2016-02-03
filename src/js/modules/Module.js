@@ -6,7 +6,7 @@ import Event from './../utils/event'
 import W from './../utils/W'
 
 
-export class Module extends EventEmitter {
+class Module extends EventEmitter {
 
 	constructor () {
 
@@ -61,3 +61,4 @@ export class Module extends EventEmitter {
 
 }
 
+export default Module;

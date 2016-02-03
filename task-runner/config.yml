@@ -4,6 +4,7 @@ site: ./site/
 scripts: 
     -
         src: js/Main.js
+        folder: js/
         dest: assets/js/
         filename: scripts.js
 
@@ -36,7 +37,7 @@ sprites:
         src: 
             - sprite/png/**/*.png
         dest: assets/img/sprite
-        imgPath: assets/img/sprite
+        imgPath: ../img/sprite
         cssDest: css/
         filename: sprite.png
         stylename: sprite.styl
@@ -44,6 +45,6 @@ sprites:
         type: svg
         src: 
             - sprite/svg/**/*.svg
-        dest: App/views/desktop/partials/
-        filename: icons.svg
+        dest: /
+        filename: icons.php
 

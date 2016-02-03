@@ -11,9 +11,13 @@ import sourcemaps 		from 'gulp-sourcemaps'
 import source 			from 'vinyl-source-stream'
 import buffer 			from 'vinyl-buffer'
 import browserify 		from 'browserify'
+import shimify	 		from 'browserify-shim'
 import watchify 		from 'watchify'
 import babelify 		from 'babelify'
+import aliasify 		from 'aliasify'
+import stringify 		from 'stringify'
 import uglifyify 		from 'uglifyify'
+import nunjucksify 		from 'nunjucksify'
 import util 	 		from 'gulp-util'
 import prettyHrtime 	from 'pretty-hrtime'
 
@@ -34,9 +38,7 @@ const bundle = function (dest, filename) {
 		})
 		.pipe(plumber())
 		.pipe(source(filename))
-		.pipe(buffer())
-		.pipe(sourcemaps.init({ loadMaps: true }))
-		.pipe(sourcemaps.write('./'))
+		//.pipe(buffer())
 		.pipe(gulp.dest(dest))
 		.on('end', () => {
 			util.log('Finished', '\'' + util.colors.cyan('scripts') + '\'', 'after', util.colors.magenta(prettyHrtime(process.hrtime(startTime))))
@@ -54,14 +56,22 @@ gulp.task('scripts', () => {
 		const dest = config.site + script.dest
 
 		const b = browserify(src, {
+        	paths: ['./node_modules', src],
 			debug: true,
-			extensions: ['.js', '.json', '.es6']
+			extensions: ['.js', '.json'],
+			cache: {},
+			packageCache: {}
 		})
+		.transform(stringify(['.hbs', '.html', '.swig']))
 		.transform(babelify, {
-			presets: ['es2015', 'stage-0']
+			presets: ['es2015', 'stage-0'],
+			only: [ config.src + script.folder ]
 		})
+		.transform(shimify)
+		.transform(aliasify)
+		.transform(nunjucksify)
 
-		bundler = watchify(b)
+		bundler = watchify(b, { poll: true })
 
 		bundler.on( 'update', () => {
 			startTime = process.hrtime()
@@ -85,8 +95,9 @@ gulp.task('scripts:prod', () => {
 
 		const b = browserify(src, {
 			debug: true,
-			extensions: ['.js', '.json', '.es6']
+			false: ['.js', '.json', '.es6']
 		})
+		.transform(stringify(['.hbs', '.html', '.swig']))
 		.transform(babelify, {
 			presets: ['es2015', 'stage-0']
 		})

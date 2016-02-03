@@ -1,8 +1,6 @@
-import dom from 'domquery'
 import Event from './utils/Event'
-import Normalize from './utils/Normalize'
 import W from './utils/W'
-import {Module} from './modules/Module'
+import Module from './modules/Module'
 
 
 class App {
@@ -12,6 +10,9 @@ class App {
 		console.log('%c# --------------------o Running App', 'background: #42e34d; color: #0F0F0F;')
 
 		this.module = new Module()
+
+		let view = require('views/ViewExample.nunj');
+		console.log(view.render({data: 'coucou'}));
 
 	}
 

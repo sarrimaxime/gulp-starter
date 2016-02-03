@@ -83,7 +83,9 @@ gulp.task('sprites:svg', () => {
 						for (let prop of props) {
 							$('[' + prop + ']').removeAttr(prop)
 						}
-						$(this).addClass('icon')
+						$('style').remove();
+						$(this).attr('class', 'icon');
+						$('path').attr('class', '');
 					//parserOptions: { xmlMode: true }
 					}
 				}))	
