@@ -26,8 +26,9 @@ gulp.task('yaml', () => {
 	for (var i = 0; i < files.length; i++){
 		var file = files[i];
 		var fileNoExt = file.split('.')[0];
+		var ext = file.split('.')[1];
 
-		if (file !== fileNoExt && file[0] !== '.') {
+		if (file !== fileNoExt && file[0] !== '.' && ext === 'yml') {
 			content += fs.readFileSync(config.src + 'data/' + file, 'utf8') + '\n'
 		}
 
@@ -41,6 +42,6 @@ gulp.task('yaml', () => {
 
 	let jsonContent = JSON.stringify(YAML.parse(content))
 
-	fs.writeFileSync(config.src + 'js/data/data.json', jsonContent, 'utf8');
+	fs.writeFileSync(config.src + 'data/data.json', jsonContent, 'utf8');
 
 })

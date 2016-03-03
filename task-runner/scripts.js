@@ -4,6 +4,7 @@
 
 import gulp 			from 'gulp'
 import YAML 			from 'yamljs'
+import fs 				from 'fs'
 
 import plumber			from 'gulp-plumber'
 import concat 			from 'gulp-concat'
@@ -17,7 +18,6 @@ import babelify 		from 'babelify'
 import aliasify 		from 'aliasify'
 import stringify 		from 'stringify'
 import uglifyify 		from 'uglifyify'
-import nunjucksify 		from 'nunjucksify'
 import util 	 		from 'gulp-util'
 import prettyHrtime 	from 'pretty-hrtime'
 
@@ -26,6 +26,8 @@ import prettyHrtime 	from 'pretty-hrtime'
 
 const config = YAML.load('./task-runner/config.yml')
 
+let pack = JSON.parse(fs.readFileSync('./package.json'))
+let deps = pack.dependencies
 
 
 let bundler = null
@@ -38,7 +40,9 @@ const bundle = function (dest, filename) {
 		})
 		.pipe(plumber())
 		.pipe(source(filename))
-		//.pipe(buffer())
+		.pipe(buffer())
+		.pipe(sourcemaps.init({loadMaps: true}))
+		.pipe(sourcemaps.write('./maps'))
 		.pipe(gulp.dest(dest))
 		.on('end', () => {
 			util.log('Finished', '\'' + util.colors.cyan('scripts') + '\'', 'after', util.colors.magenta(prettyHrtime(process.hrtime(startTime))))
@@ -48,28 +52,34 @@ const bundle = function (dest, filename) {
 
 // ---------------------------------------------------------------------o task
 
+
 gulp.task('scripts', () => {
-	
+
 	for (let script of config.scripts) {
+
+		let external = []
+		for (let dep in deps) {
+			external.push(dep)
+		}
 
 		const src = config.src + script.src
 		const dest = config.site + script.dest
 
 		const b = browserify(src, {
         	paths: ['./node_modules', src],
-			debug: true,
+			debug: false,
 			extensions: ['.js', '.json'],
 			cache: {},
 			packageCache: {}
 		})
-		.transform(stringify(['.hbs', '.html', '.swig']))
+		.external(external)
+		.transform(stringify(['.hbs', '.html', '.swig', '.nunj']))
 		.transform(babelify, {
 			presets: ['es2015', 'stage-0'],
 			only: [ config.src + script.folder ]
 		})
-		.transform(shimify)
+		//.transform(shimify)
 		.transform(aliasify)
-		.transform(nunjucksify)
 
 		bundler = watchify(b, { poll: true })
 
@@ -86,29 +96,30 @@ gulp.task('scripts', () => {
 
 })
 
-gulp.task('scripts:prod', () => {
+gulp.task('scripts:vendor', () => {
 
-	for (let script of config.scripts) {
+		const dest = config.site + 'assets/js/'
 
-		const src = config.src + script.src
-		const dest = config.site + script.dest
-
-		const b = browserify(src, {
-			debug: true,
-			false: ['.js', '.json', '.es6']
+		const b = browserify({
+			debug: false
 		})
-		.transform(stringify(['.hbs', '.html', '.swig']))
-		.transform(babelify, {
-			presets: ['es2015', 'stage-0']
-		})
-		.transform({
-			global: true
-		}, 'uglifyify')
 
-		bundler = b
+		for (let dep in deps) {
+			b.require(dep)
+		}
 
-		bundle(dest, script.filename)
+		b.bundle()
+			.pipe(source('vendor.js'))
+			.pipe(buffer())
+			.pipe(sourcemaps.init({loadMaps: true}))
+			.pipe(sourcemaps.write('./maps'))
+			.pipe(gulp.dest(dest))
 
-	}
-	
+		
 })
+
+
+
+
+
+
