@@ -18,7 +18,7 @@ const config = YAML.load('./task-runner/config.yml')
 // ---------------------------------------------------------------------o task
 
 gulp.task('favicons', () => {
-	
+
 	const src = config.src + config.favicons.src
 	const dest = config.site + config.favicons.dest
 
@@ -54,7 +54,7 @@ gulp.task('favicons', () => {
 						basename: 'favicon',
 						extname: '.ico'
 					}))
-					.pipe(gulp.dest(config.site))
+					.pipe(gulp.dest(dest))
 			}
 
 		}

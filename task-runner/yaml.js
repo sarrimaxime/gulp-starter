@@ -28,7 +28,7 @@ gulp.task('yaml', () => {
 		var fileNoExt = file.split('.')[0];
 		var ext = file.split('.')[1];
 
-		if (file !== fileNoExt && file[0] !== '.' && ext === 'yml') {
+		if (file !== fileNoExt && file[0] !== '.' && ext === 'yaml') {
 			content += fs.readFileSync(config.src + 'data/' + file, 'utf8') + '\n'
 		}
 

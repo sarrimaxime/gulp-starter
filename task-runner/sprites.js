@@ -10,6 +10,8 @@ import svgstore			from 'gulp-svgstore'
 import rename			from 'gulp-rename'
 import cheerio			from 'gulp-cheerio'
 
+import fs 				from 'fs'
+
 
 // ---------------------------------------------------------------------o config
 
@@ -70,6 +72,8 @@ gulp.task('sprites:svg', () => {
 				src.push(config.src + path)
 			}
 
+			console.log(src)
+
 			gulp
 				.src(src)
 				.pipe(svgmin())
@@ -79,13 +83,16 @@ gulp.task('sprites:svg', () => {
 				}))
 				.pipe(cheerio({
 					run: ($) => {
-						const props = ['fill', 'fill-opacity', 'stroke', 'fill-rule']
-						for (let prop of props) {
-							$('[' + prop + ']').removeAttr(prop)
+						console.log(sprite.transform)
+						if (sprite.transform !== false) {
+							const props = ['fill', 'fill-opacity', 'stroke', 'fill-rule']
+							for (let prop of props) {
+								$('[' + prop + ']').removeAttr(prop)
+							}
+							$('style').remove();
+							$(this).attr('class', 'icon');
+							$('path').attr('class', '');
 						}
-						$('style').remove();
-						$(this).attr('class', 'icon');
-						$('path').attr('class', '');
 					//parserOptions: { xmlMode: true }
 					}
 				}))	

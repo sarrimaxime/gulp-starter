@@ -52,16 +52,13 @@ gulp.task('styles:prod', () => {
 		}
 
 		gulp.src(src)
-			.pipe(sourcemaps.init())
 			.pipe(stylus({
-				'compress': true
+				compress: true
 			}))
 			.pipe(autoprefixer({
 				 browsers: ['last 2 versions']
 			}))
-			.pipe(sourcemaps.write())
 			.pipe(gulp.dest(dest))
-
 	}
 
 })

@@ -19,6 +19,7 @@ import aliasify 		from 'aliasify'
 import stringify 		from 'stringify'
 import uglifyify 		from 'uglifyify'
 import util 	 		from 'gulp-util'
+import uglify 	 		from 'gulp-uglify'
 import prettyHrtime 	from 'pretty-hrtime'
 
 
@@ -67,7 +68,7 @@ gulp.task('scripts', () => {
 
 		const b = browserify(src, {
         	paths: ['./node_modules', src],
-			debug: false,
+			debug: true,
 			extensions: ['.js', '.json'],
 			cache: {},
 			packageCache: {}
@@ -96,9 +97,41 @@ gulp.task('scripts', () => {
 
 })
 
+gulp.task('scripts:prod', () => {
+
+	for (let script of config.scripts) {
+
+		const src = config.src + script.src
+		const dest = config.site + script.dest.replace('.js', '.min.js')
+
+		const b = browserify(src, {
+			paths: ['./node_modules', src],
+			debug: true,
+			extensions: ['.js', '.json'],
+			cache: {},
+			packageCache: {}
+		})
+		.transform(stringify(['.hbs', '.html', '.swig', '.nunj']))
+		.transform(babelify, {
+			presets: ['es2015', 'stage-0'],
+			only: [ config.src + script.folder ]
+		})
+		.transform(aliasify)
+
+		b.bundle()
+			.pipe(source(script.filename))
+			.pipe(buffer())
+    		.pipe(uglify())
+			.pipe(gulp.dest(dest))
+
+	}
+
+		
+})
+
 gulp.task('scripts:vendor', () => {
 
-		const dest = config.site + 'assets/js/'
+		const dest = config.site + 'static/js/'
 
 		const b = browserify({
 			debug: false
